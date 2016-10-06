@@ -24,6 +24,8 @@ import core.ParsedMethod;
 public class Parser {
 
 	public ArrayList<ParsedClass> parseFile(String source) {
+		// Metodo que separa el archivo en clases
+		// (Obtiene nombre de la clase y donde empieza y termina)
 		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		parser.setSource(source.toCharArray());
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -33,6 +35,7 @@ public class Parser {
 
 		ArrayList<ParsedClass> classes = new ArrayList<ParsedClass>();
 
+		// Se podria agregar clases anonimas tambien
 		cu.accept(new ASTVisitor() {
 			public boolean visit(TypeDeclaration node) {
 				classes.add(new ParsedClass(node.getName().toString(), node.getStartPosition(),
@@ -45,6 +48,8 @@ public class Parser {
 	}
 
 	public ArrayList<ParsedMethod> parseClass(String source, int classStart) {
+		// Metodo que separa la clase en metodos
+		// (Obtiene nombre del metodo y donde empieza y termina)
 		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		parser.setSource(source.toCharArray());
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -65,6 +70,7 @@ public class Parser {
 	}
 
 	public void parseMethod(ParsedMethod method, String source){
+		// Metodo que al pasarle un metodo, obtiene las metricas pedidas 
 		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		parser.setSource(source.toCharArray());
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
@@ -76,8 +82,9 @@ public class Parser {
 		// CANTIDAD DE LINEAS DE CODIGO
 		// Es este valor o lo mismo restandole 2 si no cuenta la declaracion del metodo y la llave de cierre
 		method.setTotalLines(source.split("\\n").length); 
-		
+				
 		parser = ASTParser.newParser(AST.JLS8);
+		// Corto el source para tener el body nada mas
 		source = source.split(Pattern.quote("{"),2)[1];
 		parser.setSource(source.substring(0, source.length()-2).toCharArray());
 		parser.setKind(ASTParser.K_STATEMENTS);
@@ -85,6 +92,7 @@ public class Parser {
 		
 		Block block = (Block) parser.createAST(null);
 		
+		// Analisis de la complejidad ciclomatica
 		block.accept(new ASTVisitor() {
 			public boolean visit(IfStatement node){
 				method.incrementCyclomaticComplexity();

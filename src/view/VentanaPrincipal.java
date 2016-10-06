@@ -172,7 +172,7 @@ public class VentanaPrincipal extends JFrame {
 		listClases = new JList<String>();
 		listClases.addMouseListener(new MouseAdapter() {
 		    public void mouseClicked(MouseEvent evt) {
-		    	handler.setMethodName(listClases.getSelectedValue().toString());
+		    	handler.setClassName(listClases.getSelectedValue().toString());
 		    	listMetodos.setListData(handler.getMethods());
 				scrollPaneMetodos.setViewportView(listMetodos);
 		    }
