@@ -80,8 +80,8 @@ public class Parser {
 		
 		method.setTotalComments(cu.getCommentList().size());
 		// CANTIDAD DE LINEAS DE CODIGO
-		// Es este valor o lo mismo restandole 2 si no cuenta la declaracion del metodo y la llave de cierre
-		method.setTotalLines(source.split("\\n").length); 
+		// Es este valor o sin restarle 2 si no cuenta la declaracion del metodo y la llave de cierre
+		method.setTotalLines(source.split("\\n").length-2); 
 				
 		parser = ASTParser.newParser(AST.JLS8);
 		// Corto el source para tener el body nada mas

@@ -56,8 +56,8 @@ public class ParsedMethod extends ParsedClass {
 		return totalComments;
 	}
 	
-	public int getCommentsPercentage(){
-		return (totalLines==0)?0:(totalComments/totalLines)*100;
+	public float getCommentsPercentage(){
+		return (totalLines==0)?0:((float)totalComments/totalLines)*100;
 	}
 
 	public int getCyclomaticComplexity() {
