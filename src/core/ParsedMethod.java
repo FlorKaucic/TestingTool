@@ -7,7 +7,7 @@ public class ParsedMethod extends ParsedClass {
 	private int fanIn;
 	private int fanOut;
 	private int halsteadLength;
-	private int halsteadVolume;
+	private double halsteadVolume;
 	
 	public ParsedMethod(String name, int start, int end) {
 		super(name, start, end);
@@ -40,11 +40,11 @@ public class ParsedMethod extends ParsedClass {
 		this.fanOut = fanOut;
 	}
 
-	public void setHalsteadLength(int halsteadLendth) {
-		this.halsteadLength = halsteadLendth;
+	public void setHalsteadLength(int halsteadLength) {
+		this.halsteadLength = halsteadLength;
 	}
 
-	public void setHalsteadVolume(int halsteadVolume) {
+	public void setHalsteadVolume(double halsteadVolume) {
 		this.halsteadVolume = halsteadVolume;
 	}
 
@@ -76,7 +76,7 @@ public class ParsedMethod extends ParsedClass {
 		return halsteadLength;
 	}
 
-	public int getHalsteadVolume() {
+	public double getHalsteadVolume() {
 		return halsteadVolume;
 	}
 

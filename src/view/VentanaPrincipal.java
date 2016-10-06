@@ -85,6 +85,7 @@ public class VentanaPrincipal extends JFrame {
 		JMenuItem mntmSeleccionar = new JMenuItem("Seleccionar");
 		mntmSeleccionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				/*
 				final JFileChooser fc = new JFileChooser("C:/Users/Flor/workspace/Dummy/src/main");
 				// fc.setMultiSelectionEnabled(true); //habilitar seleccionar
 				// mas de 1 archivo a la vez.
@@ -102,7 +103,7 @@ public class VentanaPrincipal extends JFrame {
 						listFiles.setListData(archivos);
 					}
 				}
-
+				*/
 			}
 		});
 		mnAnalisis.add(mntmSeleccionar);
@@ -140,15 +141,15 @@ public class VentanaPrincipal extends JFrame {
 		    public void mouseClicked(MouseEvent evt) {
 		    	handler.setMethodName(listMetodos.getSelectedValue().toString());
 		    	ParsedMethod method = handler.getMethod();
-		    	textAreaCodigo.append(handler.getSource(method.getStart(), method.getEnd()));
+		    	textAreaCodigo.setText(handler.getSource(method.getStart(), method.getEnd()));
 		    	textFieldLOCT.setText(String.valueOf(method.getTotalLines()));
 		    	textFieldLOCC.setText(String.valueOf(method.getTotalComments()));
-		    	textFieldPLOCC.setText(String.valueOf(method.getCommentsPercentage())+"%");
+		    	textFieldPLOCC.setText(String.format("%.2f", method.getCommentsPercentage())+"%");
 		    	textFieldCC.setText(String.valueOf(method.getCyclomaticComplexity()));
 		    	textFieldFanIn.setText(String.valueOf(method.getFanIn()));
 		    	textFieldFanOut.setText(String.valueOf(method.getFanOut()));
 		    	textFieldHL.setText(String.valueOf(method.getHalsteadLength()));
-		    	textFieldHV.setText(String.valueOf(method.getHalsteadVolume()));
+		    	textFieldHV.setText(String.format("%.2f", method.getHalsteadVolume()));
 		    }
 		});
 		scrollPaneMetodos.setViewportView(listMetodos);
@@ -339,5 +340,13 @@ public class VentanaPrincipal extends JFrame {
 		textFieldHV.setBackground((Color) null);
 		textFieldHV.setBounds(660, 390, 56, 20);
 		contentPane.add(textFieldHV);
+	
+
+		JFileChooser fc = new JFileChooser();
+		fc.setFileFilter(filtroDir);
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fc.setAcceptAllFileFilterUsed(false);
+		fc.setSelectedFile(new File("C:/Users/Flor/workspace/Dummy/src/main"));
+		listFiles.setListData(fc.getSelectedFile().listFiles(filtroJava));
 	}
 }
