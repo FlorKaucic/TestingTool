@@ -7,10 +7,10 @@ import java.util.LinkedList;
 import java.util.regex.Pattern;
 
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.Assignment;
-import org.eclipse.jdt.core.dom.Assignment.Operator;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -20,10 +20,12 @@ import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SwitchCase;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
@@ -37,13 +39,18 @@ public class Parser {
 	HashSet<String> gvars = new HashSet<String>();
 	LinkedList<String> mnames = new LinkedList<String>();
 
-	public ArrayList<ParsedClass> parseFile(String source) {
+	public ArrayList<ParsedClass> parseFile(String source, String path) {
 		// Metodo que separa el archivo en clases
 		// (Obtiene nombre de la clase y donde empieza y termina)
 		ASTParser parser = ASTParser.newParser(AST.JLS8);
 		parser.setSource(source.toCharArray());
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setResolveBindings(true);
+
+		// path ="C:\\Users\\Flor\\workspace\\Proyecto\\bin";
+		// parser.setEnvironment(new String[]{path}, new String[]{path}, null,
+		// true);
+		// parser.setUnitName("Any");
 
 		final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 
@@ -63,9 +70,100 @@ public class Parser {
 				return true;
 			}
 
+			public boolean visit(MethodDeclaration node) {
+				String name = "";
+				TypeDeclaration parent = (TypeDeclaration) node.getParent();
+				name += parent.getName();
+				name += ".";
+				name += node.getName();
+				name += "(";
+				// for (Object parameter : node.parameters()) {
+				// VariableDeclaration variableDeclaration =
+				// (VariableDeclaration) parameter;
+				// String type =
+				// variableDeclaration.getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY)
+				// .toString();
+				// for (int i = 0; i < variableDeclaration.getExtraDimensions();
+				// i++) {
+				// type += "[]";
+				// }
+				// name+=type;
+				// name+=",";
+				// }
+				name += node.parameters().size();
+				// name=name.substring(0, name.length() - 2);
+				name += ")";
+				mnames.add(name);
+				return true;
+			}
+
+			public boolean visit(MethodInvocation node) {
+				MethodDeclaration invoker = getInvokerMethod(node);
+				String invoker_name = "";
+				TypeDeclaration invoker_parent = (TypeDeclaration) invoker.getParent();
+				invoker_name += invoker_parent.getName();
+				invoker_name += ".";
+				invoker_name += invoker.getName();
+				invoker_name += "(";
+				invoker_name += node.arguments().size();
+				// boolean flag = false;
+				// for (Object parameter : invoker.parameters()) {
+				// VariableDeclaration variableDeclaration =
+				// (VariableDeclaration) parameter;
+				// String type =
+				// variableDeclaration.getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY)
+				// .toString();
+				// for (int i = 0; i < variableDeclaration.getExtraDimensions();
+				// i++) {
+				// type += "[]";
+				// }
+				// invoker_name+=type;
+				// invoker_name+=",";
+				// flag = true;
+				// }
+				// if(flag)
+				// invoker_name=invoker_name.substring(0, invoker_name.length()
+				// - 1);
+				invoker_name += ")";
+				System.out.println(invoker_name);
+
+				String invoked_name = "";
+				if (node.getExpression() == null) {
+					invoked_name += invoker_parent.getName();
+				} else {
+					if (((ASTNode) node.getExpression()).getNodeType() == Type.TYPE_DECLARATION) {
+						invoked_name += node.getExpression().toString();
+					}
+				}
+				invoked_name += ".";
+				invoked_name += node.getName();
+				invoked_name += "(";
+				// flag = false;
+				invoked_name += node.arguments().size();
+				// for(Object arg : node.arguments()){
+				// System.out.println("arg:"+arg+"\ntype:");
+				// }
+				// if(flag)
+				// invoked_name=invoked_name.substring(0, invoked_name.length()
+				// - 1);
+				invoked_name += ")";
+				System.out.println("Invoked:" + invoked_name);
+				// node;
+				return true;
+			}
+
 		});
 
 		return classes;
+	}
+
+	private MethodDeclaration getInvokerMethod(ASTNode node) {
+		if (node.getNodeType() == Type.METHOD_DECLARATION) {
+			return (MethodDeclaration) node;
+		} else {
+			ASTNode parent = node.getParent();
+			return getInvokerMethod(parent);
+		}
 	}
 
 	public ArrayList<ParsedMethod> parseClass(String source, int classStart) {
@@ -116,8 +214,6 @@ public class Parser {
 				}
 				return true;
 			}
-			
-			
 		});
 
 		parser = ASTParser.newParser(AST.JLS8);
@@ -134,7 +230,7 @@ public class Parser {
 
 		// Analisis de la complejidad ciclomatica
 		block.accept(new ASTVisitor() {
-			public boolean visit(VariableDeclarationFragment node){
+			public boolean visit(VariableDeclarationFragment node) {
 				String name = "assign=";
 				if (operators.containsKey(name))
 					operators.put(name, operators.get(name) + 1);
@@ -142,7 +238,7 @@ public class Parser {
 					operators.put(name, 1);
 				return true;
 			}
-			
+
 			public boolean visit(SimpleName node) {
 				String name = node.toString();
 				if (gvars.contains(name) || lvars.contains(name)) {
@@ -275,7 +371,8 @@ public class Parser {
 		// Se le resta 1 porque sino divide por cada uno en dos partes, y se
 		// pasa de la cantidad
 		aux = body.split(Pattern.quote(")")).length - 1 - (operators.containsKey("for") ? operators.get("for") : 0)
-				- (operators.containsKey("while") ? operators.get("while") : 0) - (operators.containsKey("do") ? operators.get("do") : 0)
+				- (operators.containsKey("while") ? operators.get("while") : 0)
+				- (operators.containsKey("do") ? operators.get("do") : 0)
 				- (operators.containsKey("catch") ? operators.get("catch") : 0)
 				- (operators.containsKey("switch") ? operators.get("for") : 0)
 				- (operators.containsKey("cond") ? operators.get("cond") : 0);
@@ -287,26 +384,31 @@ public class Parser {
 		if ((aux = body.split(Pattern.quote("]")).length - 1) > 0)
 			operators.put("[]", aux);
 
-		int smallN1=0, smallN2=0, bigN1=0, bigN2=0;
-		
+		int smallN1 = 0, smallN2 = 0, bigN1 = 0, bigN2 = 0;
+		StringBuilder halsteadInfo = new StringBuilder();
+
+		halsteadInfo.append("<html>Operadores:<br>");
 		// Calculo la cantidad de operadores totales
 		for (String k : operators.keySet()) {
+			halsteadInfo.append(k + ": " + operators.get(k) + "<br>");
 			bigN1 += operators.get(k);
 		}
 		// Calculo la cantidad de operadores diferentes
 		smallN1 = operators.size();
 
-		
-
+		halsteadInfo.append("<br>Operandos:<br>");
 		// Calculo la cantidad de operandos totales
 		for (String k : operands.keySet()) {
+			halsteadInfo.append(k + ": " + operands.get(k) + "<br>");
 			bigN2 += operands.get(k);
 		}
 		// Calculo la cantidad de operadores diferentes
 		smallN2 = operands.size();
-		
 
+		halsteadInfo.append("</html>");
 		
+		method.setHalsteadInfo(halsteadInfo.toString());
+
 		// La longitud es N = N1 + N2
 		method.setHalsteadLength(bigN1 + bigN2);
 		// El vocabulario es n = n1 + n2

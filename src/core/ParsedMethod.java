@@ -8,7 +8,8 @@ public class ParsedMethod extends ParsedClass {
 	private int fanOut;
 	private int halsteadLength;
 	private double halsteadVolume;
-	
+	private String halsteadInfo;
+
 	public ParsedMethod(String name, int start, int end) {
 		super(name, start, end);
 		totalLines = 0;
@@ -18,6 +19,7 @@ public class ParsedMethod extends ParsedClass {
 		fanOut = 0;
 		halsteadLength = 0;
 		halsteadVolume = 0;
+		halsteadInfo = "";
 	}
 
 	public void setTotalLines(int totalLines) {
@@ -55,13 +57,13 @@ public class ParsedMethod extends ParsedClass {
 	public int getTotalComments() {
 		return totalComments;
 	}
-	
-	public float getCommentsPercentage(){
-		return (totalLines==0)?0:((float)totalComments/totalLines)*100;
+
+	public float getCommentsPercentage() {
+		return (totalLines == 0) ? 0 : ((float) totalComments / totalLines) * 100;
 	}
 
 	public int getCyclomaticComplexity() {
-		return cyclomaticComplexity+1;
+		return cyclomaticComplexity + 1;
 	}
 
 	public int getFanIn() {
@@ -81,26 +83,34 @@ public class ParsedMethod extends ParsedClass {
 	}
 
 	public void incrementTotalLines() {
-		this.totalLines++;		
+		this.totalLines++;
 	}
-	
+
 	public void incrementTotalLines(int incr) {
-		this.totalLines+=incr;		
+		this.totalLines += incr;
 	}
-	
+
 	public void incrementTotalComments() {
-		this.totalComments++;		
+		this.totalComments++;
 	}
-	
+
 	public void incrementTotalComments(int incr) {
-		this.totalComments+=incr;		
+		this.totalComments += incr;
 	}
-	
+
 	public void incrementCyclomaticComplexity() {
-		this.cyclomaticComplexity++;		
+		this.cyclomaticComplexity++;
 	}
-	
+
 	public void incrementCyclomaticComplexity(int incr) {
-		this.cyclomaticComplexity+=incr;		
+		this.cyclomaticComplexity += incr;
+	}
+
+	public void setHalsteadInfo(String halsteadInfo) {
+		this.halsteadInfo = halsteadInfo;
+	}
+
+	public String getHalsteadInfo() {
+		return this.halsteadInfo;
 	}
 }

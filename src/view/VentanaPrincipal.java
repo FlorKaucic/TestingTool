@@ -48,6 +48,8 @@ public class VentanaPrincipal extends JFrame {
 	private JList<String> listMetodos;
 	private JList<File> listFiles;
 	private ParserHandler handler;
+	private JLabel lblHalsteadVolumen;
+	private JLabel lblHalsteadLongitud;
 
 	/**
 	 * Launch the application.
@@ -85,7 +87,7 @@ public class VentanaPrincipal extends JFrame {
 		JMenuItem mntmSeleccionar = new JMenuItem("Seleccionar");
 		mntmSeleccionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				/*
+				
 				final JFileChooser fc = new JFileChooser("C:/Users/Flor/workspace/Dummy/src/main");
 				// fc.setMultiSelectionEnabled(true); //habilitar seleccionar
 				// mas de 1 archivo a la vez.
@@ -103,7 +105,7 @@ public class VentanaPrincipal extends JFrame {
 						listFiles.setListData(archivos);
 					}
 				}
-				*/
+				
 			}
 		});
 		mnAnalisis.add(mntmSeleccionar);
@@ -150,6 +152,10 @@ public class VentanaPrincipal extends JFrame {
 		    	textFieldFanOut.setText(String.valueOf(method.getFanOut()));
 		    	textFieldHL.setText(String.valueOf(method.getHalsteadLength()));
 		    	textFieldHV.setText(String.format("%.2f", method.getHalsteadVolume()));
+		    	String halsteadInfo = method.getHalsteadInfo();
+		    	System.out.println(halsteadInfo);
+		    	lblHalsteadLongitud.setToolTipText(halsteadInfo);
+		    	lblHalsteadVolumen.setToolTipText(halsteadInfo);
 		    }
 		});
 		scrollPaneMetodos.setViewportView(listMetodos);
@@ -237,11 +243,11 @@ public class VentanaPrincipal extends JFrame {
 		lblFanOut.setBounds(457, 343, 193, 14);
 		contentPane.add(lblFanOut);
 
-		JLabel lblHalsteadLongitud = new JLabel("Halstead Longitud:");
+		lblHalsteadLongitud = new JLabel("Halstead Longitud:");
 		lblHalsteadLongitud.setBounds(457, 368, 193, 14);
 		contentPane.add(lblHalsteadLongitud);
 
-		JLabel lblHalsteadVolumen = new JLabel("Halstead Volumen:");
+		lblHalsteadVolumen = new JLabel("Halstead Volumen:");
 		lblHalsteadVolumen.setBounds(457, 393, 193, 14);
 		contentPane.add(lblHalsteadVolumen);
 

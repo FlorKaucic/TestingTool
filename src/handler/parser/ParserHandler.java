@@ -47,7 +47,7 @@ public class ParserHandler {
 	public void parse() {
 		if(source==null)
 			return;
-		this.file.addClass(parser.parseFile(source));	
+		this.file.addClass(parser.parseFile(source, this.file.getName()));	
 		for(ParsedClass c : this.file.getClasses()){
 			c.addMethod(parser.parseClass(source.substring(c.getStart(), c.getEnd()), c.getStart()));
 			for(ParsedMethod m : c.getMethods()){
