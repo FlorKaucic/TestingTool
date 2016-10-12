@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.PostfixExpression;
 import org.eclipse.jdt.core.dom.PrefixExpression;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -77,21 +78,17 @@ public class Parser {
 				name += ".";
 				name += node.getName();
 				name += "(";
-				// for (Object parameter : node.parameters()) {
-				// VariableDeclaration variableDeclaration =
-				// (VariableDeclaration) parameter;
-				// String type =
-				// variableDeclaration.getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY)
-				// .toString();
-				// for (int i = 0; i < variableDeclaration.getExtraDimensions();
-				// i++) {
-				// type += "[]";
-				// }
-				// name+=type;
-				// name+=",";
-				// }
-				name += node.parameters().size();
-				// name=name.substring(0, name.length() - 2);
+				for (Object parameter : node.parameters()) {
+					VariableDeclaration variableDeclaration = (VariableDeclaration) parameter;
+					String type = variableDeclaration.getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY)
+							.toString();
+					for (int i = 0; i < variableDeclaration.getExtraDimensions(); i++) {
+						type += "[]";
+					}
+					name += type;
+					name += ",";
+				}
+				name = name.substring(0, name.length() - 2);
 				name += ")";
 				mnames.add(name);
 				return true;
@@ -105,27 +102,22 @@ public class Parser {
 				invoker_name += ".";
 				invoker_name += invoker.getName();
 				invoker_name += "(";
-				invoker_name += node.arguments().size();
-				// boolean flag = false;
-				// for (Object parameter : invoker.parameters()) {
-				// VariableDeclaration variableDeclaration =
-				// (VariableDeclaration) parameter;
-				// String type =
-				// variableDeclaration.getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY)
-				// .toString();
-				// for (int i = 0; i < variableDeclaration.getExtraDimensions();
-				// i++) {
-				// type += "[]";
-				// }
-				// invoker_name+=type;
-				// invoker_name+=",";
-				// flag = true;
-				// }
-				// if(flag)
-				// invoker_name=invoker_name.substring(0, invoker_name.length()
-				// - 1);
+				boolean flag = false;
+				for (Object parameter : invoker.parameters()) {
+					VariableDeclaration variableDeclaration = (VariableDeclaration) parameter;
+					String type = variableDeclaration.getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY)
+							.toString();
+					for (int i = 0; i < variableDeclaration.getExtraDimensions(); i++) {
+						type += "[]";
+					}
+					invoker_name += type;
+					invoker_name += ",";
+					flag = true;
+				}
+				if (flag)
+					invoker_name = invoker_name.substring(0, invoker_name.length() - 1);
 				invoker_name += ")";
-				System.out.println(invoker_name);
+				System.out.println("Invoker: "+invoker_name);
 
 				String invoked_name = "";
 				if (node.getExpression() == null) {
@@ -138,17 +130,14 @@ public class Parser {
 				invoked_name += ".";
 				invoked_name += node.getName();
 				invoked_name += "(";
-				// flag = false;
-				invoked_name += node.arguments().size();
-				// for(Object arg : node.arguments()){
-				// System.out.println("arg:"+arg+"\ntype:");
-				// }
-				// if(flag)
-				// invoked_name=invoked_name.substring(0, invoked_name.length()
-				// - 1);
+				flag = false;
+				for (Object arg : node.arguments()) {
+					System.out.println("arg: " + arg + "\ntype: "+arg.getClass());
+				}
+				if (flag)
+					invoked_name = invoked_name.substring(0, invoked_name.length() - 1);
 				invoked_name += ")";
-				System.out.println("Invoked:" + invoked_name);
-				// node;
+				System.out.println("Invoked: " + invoked_name);
 				return true;
 			}
 
@@ -406,7 +395,7 @@ public class Parser {
 		smallN2 = operands.size();
 
 		halsteadInfo.append("</html>");
-		
+
 		method.setHalsteadInfo(halsteadInfo.toString());
 
 		// La longitud es N = N1 + N2

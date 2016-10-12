@@ -153,7 +153,6 @@ public class VentanaPrincipal extends JFrame {
 		    	textFieldHL.setText(String.valueOf(method.getHalsteadLength()));
 		    	textFieldHV.setText(String.format("%.2f", method.getHalsteadVolume()));
 		    	String halsteadInfo = method.getHalsteadInfo();
-		    	System.out.println(halsteadInfo);
 		    	lblHalsteadLongitud.setToolTipText(halsteadInfo);
 		    	lblHalsteadVolumen.setToolTipText(halsteadInfo);
 		    }
