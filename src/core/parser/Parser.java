@@ -143,6 +143,7 @@ public class Parser {
 
 		cu.accept(new ASTVisitor() {
 			public boolean visit(MethodDeclaration node) {
+				HashSet<String> lvars = new HashSet<String>();
 				String name = "";
 				TypeDeclaration parent = (TypeDeclaration) node.getParent();
 				name += parent.getName();
@@ -152,6 +153,7 @@ public class Parser {
 				boolean flag = false;
 				for (Object parameter : node.parameters()) {
 					VariableDeclaration variableDeclaration = (VariableDeclaration) parameter;
+					lvars.add(variableDeclaration.getName().toString());
 					String type = variableDeclaration.getStructuralProperty(SingleVariableDeclaration.TYPE_PROPERTY)
 							.toString();
 					for (int i = 0; i < variableDeclaration.getExtraDimensions(); i++) {
@@ -165,8 +167,10 @@ public class Parser {
 					name = name.substring(0, name.length() - 1);
 				name += ")";
 
-				methods.add(new ParsedMethod(name, classStart + node.getStartPosition(),
-						classStart + node.getStartPosition() + node.getLength()));
+				ParsedMethod m = new ParsedMethod(name, classStart + node.getStartPosition(),
+						classStart + node.getStartPosition() + node.getLength());
+				m.setLVars(lvars);
+				methods.add(m);
 				return true;
 			}
 		});
@@ -266,7 +270,7 @@ public class Parser {
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 		parser.setResolveBindings(true);
 
-		final CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
 
 		method.setTotalComments(cu.getCommentList().size());
 		// CANTIDAD DE LINEAS DE CODIGO
@@ -274,31 +278,19 @@ public class Parser {
 		// y la llave de cierre
 		method.setTotalLines(source.split("\\n").length - 2);
 
-		HashSet<String> lvars = new HashSet<String>();
-		
 		int sum = 0;
-		for(int i=0; i<mnames.size(); i++){
+		for (int i = 0; i < mnames.size(); i++) {
 			sum += fans[mnames.indexOf(method.getName())][i];
 		}
 		method.setFanIn(sum);
-		
+
 		sum = 0;
-		for(int i=0; i<mnames.size(); i++){
+		for (int i = 0; i < mnames.size(); i++) {
 			sum += fans[i][mnames.indexOf(method.getName())];
 		}
 		method.setFanOut(sum);
 
-		cu.accept(new ASTVisitor() {
-			@Override
-			public boolean visit(MethodDeclaration node) {
-				for (Object parameter : node.parameters()) {
-					VariableDeclaration variableDeclaration = (VariableDeclaration) parameter;
-					System.out.println("var:"+variableDeclaration.getName().toString());
-					lvars.add(variableDeclaration.getName().toString());
-				}
-				return true;
-			}
-		});
+		HashSet<String> lvars = method.getLVars();
 
 		parser = ASTParser.newParser(AST.JLS8);
 		// Corto el source para tener el body nada mas

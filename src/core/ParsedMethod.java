@@ -1,5 +1,7 @@
 package core;
 
+import java.util.HashSet;
+
 public class ParsedMethod extends ParsedClass {
 	private int totalLines;
 	private int totalComments;
@@ -9,6 +11,7 @@ public class ParsedMethod extends ParsedClass {
 	private int halsteadLength;
 	private double halsteadVolume;
 	private String halsteadInfo;
+	private HashSet<String> lvars;
 
 	public ParsedMethod(String name, int start, int end) {
 		super(name, start, end);
@@ -20,6 +23,7 @@ public class ParsedMethod extends ParsedClass {
 		halsteadLength = 0;
 		halsteadVolume = 0;
 		halsteadInfo = "";
+		lvars = null;
 	}
 
 	public void setTotalLines(int totalLines) {
@@ -112,5 +116,13 @@ public class ParsedMethod extends ParsedClass {
 
 	public String getHalsteadInfo() {
 		return this.halsteadInfo;
+	}
+	
+	public void setLVars(HashSet<String> lvars){
+		this.lvars = lvars;
+	}
+
+	public HashSet<String> getLVars() {
+		return this.lvars;
 	}
 }
