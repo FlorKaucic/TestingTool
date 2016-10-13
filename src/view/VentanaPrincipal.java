@@ -50,6 +50,9 @@ public class VentanaPrincipal extends JFrame {
 	private ParserHandler handler;
 	private JLabel lblHalsteadVolumen;
 	private JLabel lblHalsteadLongitud;
+	final private Color green = new Color(0, 128, 0);
+	final private Color yellow = new Color(128, 128, 0);
+	final private Color red = new Color(128, 0, 0);
 
 	/**
 	 * Launch the application.
@@ -123,7 +126,7 @@ public class VentanaPrincipal extends JFrame {
 		contentPane.setLayout(null);
 		
 		JLabel lblCodigoDelMetodo = new JLabel("Codigo del Metodo Seleccionado");
-		lblCodigoDelMetodo.setForeground(new Color(0, 128, 0));
+		lblCodigoDelMetodo.setForeground(green);
 		lblCodigoDelMetodo.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblCodigoDelMetodo.setBounds(28, 161, 259, 24);
 		contentPane.add(lblCodigoDelMetodo);
@@ -146,8 +149,22 @@ public class VentanaPrincipal extends JFrame {
 		    	textAreaCodigo.setText(handler.getSource(method.getStart(), method.getEnd()));
 		    	textFieldLOCT.setText(String.valueOf(method.getTotalLines()));
 		    	textFieldLOCC.setText(String.valueOf(method.getTotalComments()));
-		    	textFieldPLOCC.setText(String.format("%.2f", method.getCommentsPercentage())+"%");
-		    	textFieldCC.setText(String.valueOf(method.getCyclomaticComplexity()));
+		    	double percentage = method.getCommentsPercentage();
+		    	textFieldPLOCC.setText(String.format("%.2f", percentage)+"%");
+		    	if(percentage >= 30)
+		    		textFieldPLOCC.setForeground(green);
+		    	else if(percentage <= 14)
+		    		textFieldPLOCC.setForeground(red);
+		    	else
+		    		textFieldPLOCC.setForeground(yellow);
+		    	int cc = method.getCyclomaticComplexity();
+		    	textFieldCC.setText(String.valueOf(cc));
+		    	if(cc <= 10)
+		    		textFieldCC.setForeground(green);
+		    	else if(cc >= 21)
+		    		textFieldCC.setForeground(red);
+		    	else
+		    		textFieldCC.setForeground(yellow);
 		    	textFieldFanIn.setText(String.valueOf(method.getFanIn()));
 		    	textFieldFanOut.setText(String.valueOf(method.getFanOut()));
 		    	textFieldHL.setText(String.valueOf(method.getHalsteadLength()));
@@ -160,7 +177,7 @@ public class VentanaPrincipal extends JFrame {
 		scrollPaneMetodos.setViewportView(listMetodos);
 		
 		JLabel lblSeleccioneUn = new JLabel("Seleccione Metodo de la Lista");
-		lblSeleccioneUn.setForeground(new Color(0, 128, 0));
+		lblSeleccioneUn.setForeground(green);
 		lblSeleccioneUn.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblSeleccioneUn.setBounds(579, 16, 203, 14);
 		contentPane.add(lblSeleccioneUn);
@@ -171,7 +188,7 @@ public class VentanaPrincipal extends JFrame {
 		
 		JLabel lblClases = new JLabel("Seleccione Clase de la Lista");
 		lblClases.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblClases.setForeground(new Color(0, 128, 0));
+		lblClases.setForeground(green);
 		lblClases.setBounds(353, 11, 226, 24);
 		contentPane.add(lblClases);
 
@@ -190,7 +207,7 @@ public class VentanaPrincipal extends JFrame {
 		contentPane.add(scrollPaneArchivos);
 
 		JLabel lblNewLabel_1 = new JLabel("Seleccione un Archivo de la Lista");
-		lblNewLabel_1.setForeground(new Color(0, 128, 0));
+		lblNewLabel_1.setForeground(green);
 		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblNewLabel_1.setBounds(28, 17, 226, 14);
 		contentPane.add(lblNewLabel_1);	
@@ -213,7 +230,7 @@ public class VentanaPrincipal extends JFrame {
 		scrollPaneArchivos.setViewportView(listFiles);
 
 		JLabel lblAnalisis = new JLabel("Analisis del Metodo");
-		lblAnalisis.setForeground(new Color(0, 128, 0));
+		lblAnalisis.setForeground(green);
 		lblAnalisis.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblAnalisis.setBounds(457, 166, 259, 14);
 		contentPane.add(lblAnalisis);
@@ -228,18 +245,28 @@ public class VentanaPrincipal extends JFrame {
 
 		JLabel lblPLOCC = new JLabel("<html>Porcentaje de Lineas de <br>Codigo Comentadas:</html>");
 		lblPLOCC.setBounds(457, 241, 193, 41);
+		lblPLOCC.setToolTipText("<html>Para que sea:<br>"
+				+ "<b>Bueno:</b> deberá ser mayor o igual a 30%.<br>"
+				+ "<b>Regular:</b> deberá estar entre 30% y 14%.<br>"
+				+ "<b>Malo:</b> menor o igual a 14%.</html>");
 		contentPane.add(lblPLOCC);
 
 		JLabel lblComplejidadCiclomatica = new JLabel("Complejidad Ciclomatica:");
 		lblComplejidadCiclomatica.setBounds(457, 293, 193, 14);
+		lblComplejidadCiclomatica.setToolTipText("<html>Para que sea:<br>"
+				+ "<b>Buena:</b> deberá ser menor o igual a 10.<br>"
+				+ "<b>Regular:</b> deberá estar entre 10 y 21.<br>"
+				+ "<b>Mala:</b> mayor o igual a 21.</html>");
 		contentPane.add(lblComplejidadCiclomatica);
 
 		JLabel lblFanIn = new JLabel("Fan In:");
 		lblFanIn.setBounds(457, 318, 193, 14);
+		lblFanIn.setToolTipText("Las invocaciones al metodo que se tienen en cuenta son solo las declaradas en este archivo.");
 		contentPane.add(lblFanIn);
 
 		JLabel lblFanOut = new JLabel("Fan Out:");
 		lblFanOut.setBounds(457, 343, 193, 14);
+		lblFanOut.setToolTipText("Los metodos que se tienen en cuenta son solo los declarados en este archivo.");
 		contentPane.add(lblFanOut);
 
 		lblHalsteadLongitud = new JLabel("Halstead Longitud:");
