@@ -373,12 +373,12 @@ public class VentanaPrincipal extends JFrame {
 		textFieldHV.setBounds(660, 390, 56, 20);
 		contentPane.add(textFieldHV);
 	
-
-		JFileChooser fc = new JFileChooser();
-		fc.setFileFilter(filtroDir);
-		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		fc.setAcceptAllFileFilterUsed(false);
-		fc.setSelectedFile(new File("C:/Users/Flor/workspace/Dummy/src/main"));
-		listFiles.setListData(fc.getSelectedFile().listFiles(filtroJava));
+//
+//		JFileChooser fc = new JFileChooser();
+//		fc.setFileFilter(filtroDir);
+//		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+//		fc.setAcceptAllFileFilterUsed(false);
+//		fc.setSelectedFile(new File("C:/Users/Flor/workspace/Dummy/src/main"));
+//		listFiles.setListData(fc.getSelectedFile().listFiles(filtroJava));
 	}
 }
