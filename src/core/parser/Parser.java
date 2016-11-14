@@ -450,7 +450,7 @@ public class Parser {
 				- (operators.containsKey("while") ? operators.get("while") : 0)
 				- (operators.containsKey("do") ? operators.get("do") : 0)
 				- (operators.containsKey("catch") ? operators.get("catch") : 0)
-				- (operators.containsKey("switch") ? operators.get("for") : 0)
+				- (operators.containsKey("switch") ? operators.get("switch") : 0)
 				- (operators.containsKey("cond") ? operators.get("cond") : 0);
 		// Tambien se restan las condiciones que usan si o si parentesis
 
