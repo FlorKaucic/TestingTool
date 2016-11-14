@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.TextArea;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -13,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -79,7 +82,10 @@ public class VentanaPrincipal extends JFrame {
 		setTitle("Herramienta de Testing");
 		setMinimumSize(new Dimension(800, 600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 640, 410);
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		setSize(640, 410);
+		Dimension dim = toolkit.getScreenSize();
+		setLocation((int)(dim.getWidth()-this.getWidth())/2, (int)(dim.getHeight()-this.getHeight())/2);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -91,7 +97,8 @@ public class VentanaPrincipal extends JFrame {
 		mntmSeleccionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				final JFileChooser fc = new JFileChooser("C:/Users/Flor/workspace/Dummy/src/main");
+				//final JFileChooser fc = new JFileChooser("C:/Users/Flor/workspace/Dummy/src/main");
+				final JFileChooser fc = new JFileChooser();
 				// fc.setMultiSelectionEnabled(true); //habilitar seleccionar
 				// mas de 1 archivo a la vez.
 				fc.setFileFilter(filtroDir);
@@ -373,7 +380,38 @@ public class VentanaPrincipal extends JFrame {
 		textFieldHV.setBounds(660, 390, 56, 20);
 		contentPane.add(textFieldHV);
 	
-//
+		
+		JButton clipboard = new JButton("Copiar al portapapeles");
+		clipboard.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		clipboard.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		clipboard.setBounds(465, 450, 200, 30);
+		clipboard.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("Lineas de Codigo Totales: "+textFieldLOCT.getText());
+				sb.append("\n");
+				sb.append("Lineas de Codigo Comentadas: "+textFieldLOCC.getText());
+				sb.append("\n");
+				sb.append("Porcentaje de Lineas de Codigo Comentadas: "+textFieldPLOCC.getText());
+				sb.append("\n");
+				sb.append("Complejidad Ciclomatica: "+textFieldCC.getText());
+				sb.append("\n");
+				sb.append("Fan In: "+textFieldFanIn.getText());
+				sb.append("\n");
+				sb.append("Fan Out: "+textFieldFanOut.getText());
+				sb.append("\n");
+				sb.append("Halstead Longitud: "+textFieldHL.getText());
+				sb.append("\n");
+				sb.append("Halstead Volumen: "+textFieldHV.getText());
+				toolkit.getSystemClipboard().setContents(new StringSelection(sb.toString()), null);
+				
+			}
+		});
+		contentPane.add(clipboard);
+	
+		
 //		JFileChooser fc = new JFileChooser();
 //		fc.setFileFilter(filtroDir);
 //		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
